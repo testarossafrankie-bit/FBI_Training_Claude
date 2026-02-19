@@ -6,7 +6,7 @@
 <title>FBI Sales Agent Interactive Training</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui,-apple-system,sans-serif;background:red;color:#374151}
+body{font-family:system-ui,-apple-system,sans-serif;background:#F5F4EF;color:#374151}
 button{font-family:inherit;cursor:pointer;border:none;transition:all 0.2s}
 button:hover{opacity:0.92}
 ::-webkit-scrollbar{width:6px}
@@ -249,7 +249,7 @@ function renderContent(section){
 
 // ─── VIEWS ──────────────────────────────────────────────────
 function renderHome(){
-  return h("div",{style:{minHeight:"100vh",background:"linear-gradient(135deg,#141F38 0%,#1B2A4A 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"24px"}},
+  return h("div",{style:{minHeight:"100vh",background:"red",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"24px"}},
     h("div",{style:{maxWidth:"520px",textAlign:"center"}},
       h("div",{style:{fontSize:"14px",letterSpacing:"3px",color:"#2A7B88",fontWeight:"700",marginBottom:"12px"}},"FRED BEANS INSURANCE"),
       h("h1",{style:{fontSize:"36px",color:"#fff",fontWeight:"800",marginBottom:"8px",lineHeight:"1.2"}},"Sales Agent Training"),
