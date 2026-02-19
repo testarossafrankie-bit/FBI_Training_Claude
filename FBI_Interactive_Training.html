@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FBI Sales Agent Interactive Training</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#F5F4EF;color:#374151}
+button{font-family:inherit;cursor:pointer;border:none;transition:all 0.2s}
+button:hover{opacity:0.92}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:3px}
+.nav-btn{background:transparent;color:#94A3B8;font-size:14px;padding:8px 0}
+.nav-btn:hover{color:#fff}
+.progress-bar{width:100%;height:6px;background:#E5E7EB;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:#2A7B88;border-radius:3px;transition:width 0.5s ease}
+.hero-block{font-size:16px;line-height:1.6;background:#fff;padding:20px;border-radius:8px;border-left:4px solid #2A7B88}
+.card{background:#fff;padding:16px;border-radius:8px;border-left:3px solid #2A7B88}
+.alert-block{background:#FEF2F2;border:1px solid #C0392B33;padding:16px;border-radius:8px;font-size:14px;color:#C0392B;font-weight:600}
+.tip-block{background:#F0FDF4;border:1px solid #27AE6033;padding:16px;border-radius:8px;font-size:14px;color:#166534;font-weight:500}
+.wordtrack{background:#141F38;padding:20px;border-radius:8px}
+.wordtrack h4{color:#fff;font-size:14px;margin-bottom:10px}
+.wordtrack p{color:#CBD5E1;font-size:13px;line-height:1.7;font-style:italic}
+.objection{background:#fff;padding:20px;border-radius:8px;border-left:4px solid #C0392B}
+.objection h4{color:#C0392B;font-size:14px;margin-bottom:8px}
+.objection p{font-size:13px;line-height:1.7}
+.quiz-opt{background:#fff;border:2px solid #E5E7EB;border-radius:8px;padding:14px 16px;text-align:left;font-size:14px;width:100%;margin-bottom:10px}
+.quiz-opt:hover{border-color:#2A7B88}
+.quiz-opt.correct{background:#F0FDF4;border-color:#27AE60;color:#27AE60;font-weight:700}
+.quiz-opt.wrong{background:#FEF2F2;border-color:#C0392B;color:#C0392B}
+.full-btn{width:100%;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:700;color:#fff}
+.section-tab{background:transparent;color:#6B7280;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;white-space:nowrap}
+.section-tab.active{background:#1B2A4A;color:#fff}
+.section-tab.done{color:#27AE60}
+.rp-response{background:#fff;border:2px solid #E5E7EB;border-radius:8px;padding:16px;text-align:left;font-size:13px;width:100%;margin-bottom:10px;line-height:1.5}
+.rp-response .feedback{margin-top:8px;font-size:12px;font-weight:600}
+.stat-card{background:#fff;border-radius:8px;padding:20px 16px;text-align:center;border-top:3px solid #2A7B88;flex:1}
+.stat-num{font-size:28px;font-weight:800;color:#1B2A4A}
+.stat-label{font-size:12px;color:#6B7280;margin-top:4px}
+.placement-rank{color:#fff;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;min-width:24px;text-align:center;display:inline-block}
+.standard-row{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #E5E7EB}
+.standard-row:last-child{border-bottom:none}
+.timeline-item{display:flex;gap:16px;margin-bottom:16px}
+.timeline-day{background:#1B2A4A;color:#fff;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;white-space:nowrap;height:fit-content}
+.customer-bubble{background:#F1F5F9;padding:20px;border-radius:12px;margin:20px 0;border-left:4px solid #6B7280}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ─── DATA ───────────────────────────────────────────────────
+const SECTIONS=[
+{id:1,title:"Welcome & What We're Building",icon:"\u{1F3E0}",content:[
+{type:"hero",text:"You're joining a dealership-embedded insurance agency built inside one of the largest family-owned automotive groups in the Northeast."},
+{type:"list",title:"What makes us different:",items:["We sit inside the dealership \u2013 every car buyer is a potential customer","We verify insurance on every deal, creating warm leads automatically","We bundle auto, home, renters, and specialty lines for maximum retention","We're scaling across 31 Fred Beans locations","Your income is directly tied to your effort: more quotes = more money"]},
+{type:"stats",items:[{num:"1,000+",label:"Cars/month in Doylestown"},{num:"150,000",label:"Cars serviced/year"},{num:"$4M+",label:"Annual premium potential"}]}
+],quiz:[
+{q:"How many Fred Beans locations are we scaling across?",opts:["15","21","31","45"],answer:2},
+{q:"What is our primary advantage over traditional agencies?",opts:["Lower prices","We sit inside the dealership with built-in customers","More carriers","Online quoting"],answer:1},
+{q:"What drives your income at FBI?",opts:["Seniority","More quotes and sales activity","Number of hours worked","Customer reviews"],answer:1}
+]},
+{id:2,title:"Prime Store Philosophy",icon:"\u2B50",content:[
+{type:"hero",text:"Seats in our agency are earned and protected. We build a disciplined, scalable insurance machine."},
+{type:"cards",items:[{title:"Reliability",body:"Show up every day, on time. Attendance directly impacts income."},{title:"Daily Activity",body:"5 quotes minimum per day. Every day. Non-negotiable."},{title:"CRM Discipline",body:"Every interaction logged in EzLynx. Notes, follow-ups, documents."},{title:"Accountability",body:"You sell it. You protect it. You clean it up."}]},
+{type:"alert",text:"A 33% close rate is our FLOOR \u2013 not our ceiling. We close the RIGHT business."}
+],quiz:[
+{q:"What is the minimum number of quotes per day?",opts:["3","5","7","10"],answer:1},
+{q:"What is our close rate floor?",opts:["25%","33%","40%","50%"],answer:1},
+{q:"If you're closing 50%+ of quotes, what should you ask yourself?",opts:["How do I get a raise?","Am I taking on too much risk?","Should I quote more?","Am I the best agent?"],answer:1}
+]},
+{id:3,title:"Carriers & Placement",icon:"\u{1F3E2}",content:[
+{type:"hero",text:"Know your carriers. Know the placement order. Every risk has a home."},
+{type:"placement",title:"Auto Placement Order",items:[{carrier:"Travelers",desc:"Go-to for preferred standard risks. Best rates for clean records + homeowners."},{carrier:"Foremost 360 (NatGen)",desc:"Flexible standard carrier. Good for customers who don't fit Travelers."},{carrier:"Safeco",desc:"Strong in Philadelphia. Good third option for preferred customers."},{carrier:"Nationwide",desc:"Strong for packaged home and auto. Policy Express for excellent risks."},{carrier:"Progressive",desc:"Broadest appetite. Writes almost anything. Start here for non-standard."},{carrier:"GEICO Advantage",desc:"Non-standard fallback when Progressive isn't competitive."},{carrier:"Bristol West / Glacier",desc:"High-risk specialist. SR-22s, DUIs, multiple violations."}]},
+{type:"tip",text:"Always start at the top of the placement hierarchy and work down."}
+],quiz:[
+{q:"Which carrier is your go-to for preferred standard auto?",opts:["Progressive","Travelers","GEICO","Safeco"],answer:1},
+{q:"Where do you start for non-standard auto risks?",opts:["Bristol West","GEICO","Progressive","Nationwide"],answer:2},
+{q:"Which carrier requires you to use Policy Express for excellent risks?",opts:["Travelers","Safeco","Nationwide","Progressive"],answer:2}
+]},
+{id:4,title:"Coverage Standards",icon:"\u{1F6E1}\uFE0F",content:[
+{type:"hero",text:"You are the authority. You dictate the narrative. Every customer gets proper coverage."},
+{type:"standards",items:[{label:"BI Limits",value:"100/300 preferred. Never below state minimum without talking to Frank."},{label:"UM/UIM",value:"Usually matches BI limits."},{label:"Deductibles",value:"NEVER quote more than $1,000 without talking to Frank."},{label:"Tort Selection",value:"Full tort: always sue for pain & suffering. Limited tort: limits rights for lower premium."},{label:"Telematics",value:"Include in every quote. Let the customer refuse \u2013 most won't."},{label:"Renters Property",value:"$25,000 default. NatGen 360: $50,000 minimum."},{label:"Condo Loss Assessment",value:"REQUIRED. Default to $25,000. Covers master policy deductible."}]},
+{type:"alert",text:"Get away from 'Apples to Apples.' Make changes that help the customer and help you sell the policy."}
+],quiz:[
+{q:"What is the preferred BI limit?",opts:["50/100","100/300","250/500","State minimum"],answer:1},
+{q:"What is the maximum deductible you can quote without approval?",opts:["$500","$750","$1,000","$2,500"],answer:2},
+{q:"Condo Loss Assessment is:",opts:["Optional add-on","Only for high-value condos","Required on every condo policy","Not available in PA"],answer:2},
+{q:"How should you handle telematics?",opts:["Only offer if asked","Include in every quote","Never include it","Only for young drivers"],answer:1}
+]},
+{id:5,title:"Word Tracks & Closing",icon:"\u{1F3AF}",content:[
+{type:"hero",text:"Always pivot to the package. Lead with one total price. You dictate the narrative."},
+{type:"wordtrack",title:"The Homeowner Package",script:"Give the customer the auto price and say: 'I included the discount for having your home insurance with us. Quick questions about the home \u2013 your roof has been replaced in the last 5\u201310 years, right?' Just jump in. Don't ask permission \u2013 assume the package."},
+{type:"wordtrack",title:"The Renters Package",script:"When you give the price, give the total with renters included: 'This $XXX/month comes with property coverage.' Don't separate it out. The renters policy is basically free \u2013 it saves about as much as it costs off the auto."},
+{type:"wordtrack",title:"The Assumptive Close",script:"Great, so I have you at 100/300, which is what your reports show you have now, $1,000 deductible, rental car and towing. The payment is $XXX/month. I just need your bank routing and account number and the first payment of $XXX and we'll take care of the rest."},
+{type:"alert",text:"Always get the bank information first \u2013 that shows a commitment. Then ask for mortgage company, loan number, prior agent, etc."}
+],quiz:[
+{q:"When presenting a renters package, you should:",opts:["List it as a separate line item","Ask if they want renters insurance","Include it in the total price automatically","Only offer to homeowners"],answer:2},
+{q:"What should you get from the customer FIRST when closing?",opts:["Mortgage company","Prior agent info","Bank routing and account number","Loan number"],answer:2},
+{q:"The word 'bundle' should be replaced with:",opts:["Package","Combo","Deal","Discount"],answer:0}
+]},
+{id:6,title:"Objection Handling",icon:"\u{1F4AA}",content:[
+{type:"hero",text:"Expect objections. Prepare for them. Never let a customer walk without trying."},
+{type:"objection",title:'"I already have insurance"',response:"That's great \u2013 that is why we wanted to speak with you. We're going to make sure you have the proper coverages and aren't overpaying. If your current insurance is the best, then at least you'll know."},
+{type:"objection",title:'"I need to think about it"',response:"I understand that, this is an important decision. Let's chat next week. [Small talk] You know, people put this off and don't take advantage. Let's lock in the savings \u2013 I just need your bank info and we'll take care of the rest."},
+{type:"objection",title:'"I don\'t have time right now"',response:"I understand, the world is so busy now. How much are you paying for your auto insurance? [Whatever they say:] That's too much. We'll take care of that. [Jump into the quote.]"},
+{type:"objection",title:'"My rate is fine"',response:"I understand, but we can make the whole process simple \u2013 you just click and sign, we take care of cancellations and contacting banks. If we can help you, it's like found money."}
+],quiz:[
+{q:"When a customer says 'I already have insurance', your first response is:",opts:["Ask when their policy renews","That's great \u2013 that's why we wanted to speak with you","Offer to beat their price","Ask them to come back later"],answer:1},
+{q:"When a customer says 'I don't have time', you should:",opts:["Schedule a callback","Ask how much they're paying and jump into the quote","Give them your card","Send a follow-up email"],answer:1}
+]},
+{id:7,title:"Follow-Up & X-Dating",icon:"\u{1F4C5}",content:[
+{type:"hero",text:"Discipline today pays tomorrow. Every lead gets follow-up. No exceptions."},
+{type:"timeline",items:[{day:"Day 1",action:"Initial quote presentation. Set the next follow-up."},{day:"Day 2",action:"Call/text: 'Just wanted to see if we can still help you. We were saving you $X.'"},{day:"Day 4",action:"Follow-up email and text highlighting the benefits."},{day:"Day 10",action:"Final outreach \u2013 call, text, and email. Don't alienate them."},{day:"X-Date",action:"Follow up around renewal or in 6 months. Eventually you'll have 10/day and close one each day."}]},
+{type:"tip",text:"Log every X-date in Outlook calendar. Set follow-up 30 days before renewal or 6 months out."}
+],quiz:[
+{q:"Where should you log X-dates?",opts:["EzLynx only","Outlook calendar","A spreadsheet","Your phone"],answer:1},
+{q:"When should you set X-date follow-up?",opts:["1 week before renewal","30 days before renewal or 6 months out","The day of renewal","90 days out"],answer:1},
+{q:"How many follow-up touches before the X-date?",opts:["2","3","4","7"],answer:2}
+]},
+{id:8,title:"Commercial & Advanced",icon:"\u{1F69B}",content:[
+{type:"hero",text:"Commercial auto opportunities are everywhere. Learn to spot them."},
+{type:"list",title:"Spot Commercial Opportunities:",items:["Vehicle titled to a business or LLC","Lettered vehicles \u2013 even in personal name, need commercial","Large trucks (F-350+), Transit vans, dump trucks","Commercial plates or DOT numbers","Customer mentions using vehicle for work"]},
+{type:"placement",title:"Commercial Placement",items:[{carrier:"Progressive",desc:"Go-to. Commercial auto, BOP, GL. Small fleets & commercial hauling."},{carrier:"GEICO",desc:"Small fleets, commercial hauling, owner-operators."},{carrier:"Bristol West",desc:"Non-standard commercial."},{carrier:"National General",desc:"Commercial auto only."},{carrier:"Utica",desc:"GL only (standalone)."}]},
+{type:"tip",text:"Get the DOT# if they have one \u2013 it makes quoting very easy."}
+],quiz:[
+{q:"A lettered vehicle in a personal name needs:",opts:["Personal auto policy","Commercial auto policy","Either one","No insurance change"],answer:1},
+{q:"Where do you go for standalone GL?",opts:["Progressive","GEICO","Utica","National General"],answer:2},
+{q:"What info makes commercial quoting very easy?",opts:["EIN number","DOT#","Business license","Tax returns"],answer:1}
+]}
+];
+
+const SCENARIOS=[
+{id:1,title:"The Busy Customer",difficulty:"Beginner",setup:"A customer just bought a 2024 Toyota Camry. They seem rushed and say they already have insurance.",lines:[
+{text:"Look, I already have State Farm. I'm fine.",responses:[
+{text:"That's great \u2013 that's why we wanted to speak with you. We want to make sure you have the proper coverages and aren't overpaying.",score:10,fb:"Perfect! You acknowledged them and positioned yourself as a resource."},
+{text:"Can I at least get a quote? It'll only take 5 minutes.",score:5,fb:"Decent, but you're asking permission. Be the authority."},
+{text:"OK, no problem. Here's my card if you change your mind.",score:1,fb:"Never let them walk that easily."}]},
+{text:"I really don't have time for this right now.",responses:[
+{text:"I understand, the world is so busy. How much are you paying for your auto insurance right now?",score:10,fb:"Great redirect! Whatever they say, tell them 'That's too much.'"},
+{text:"When would be a good time to reach you?",score:3,fb:"Don't ask 'when is a good time' \u2013 keep them in the conversation."},
+{text:"No worries, I'll send you an email.",score:2,fb:"Too passive. Jump into the quote."}]},
+{text:"Fine, what do you need from me?",responses:[
+{text:"Just your date of birth and I can pull everything up. Do you own or rent your home?",score:10,fb:"Perfect! Minimal info, already pivoting to the package."},
+{text:"I need your full name, address, SSN, driving history...",score:2,fb:"Too much upfront. Get the basics and let EzLynx work."},
+{text:"Let me get your current insurance card and I'll run a comparison.",score:7,fb:"Good, but reports will show prior coverage."}]}
+]},
+{id:2,title:"The Price Shopper",difficulty:"Intermediate",setup:"A service lane customer got an email about savings. Very price-focused.",lines:[
+{text:"I'm only interested if you can beat my current rate. I pay $180/month.",responses:[
+{text:"That does sound high. Let me see what we can do \u2013 and we always make sure you have proper coverages too. Do you own or rent?",score:10,fb:"You validated their concern and started gathering info."},
+{text:"We can definitely beat that!",score:4,fb:"Don't promise before you know what they have."},
+{text:"What coverages do you currently have?",score:6,fb:"Reports will show this. Better to jump in and quote."}]},
+{text:"I just want the cheapest option. Minimum coverage.",responses:[
+{text:"I hear you on wanting to save. Let me show you what proper coverage looks like at a great price. The difference is usually only a few dollars.",score:10,fb:"You're the authority. Make changes that help the customer AND help you sell."},
+{text:"Sure, I can quote you at state minimums.",score:1,fb:"Never lead with minimums."},
+{text:"Minimum coverage is risky. Let me explain why you need more.",score:6,fb:"Right idea, but show the price \u2013 don't lecture."}]},
+{text:"OK, this looks good. Let me think about it.",responses:[
+{text:"I understand. That car you got is pretty nice! You know, people put this off. Let's lock in the savings \u2013 I just need your bank info.",score:10,fb:"Build rapport, then circle back to close."},
+{text:"Sure, take your time! When should I follow up?",score:3,fb:"Too passive. Try to close now."},
+{text:"These rates are locked in now. Let's get you set up before anything changes.",score:8,fb:"Good urgency close! Now ask for the bank info."}]}
+]},
+{id:3,title:"The Homeowner Package",difficulty:"Advanced",setup:"You've quoted auto for a customer buying a new F-150. They own their home. Time to pivot to the package.",lines:[
+{text:"OK so what's the auto going to cost me?",responses:[
+{text:"Great news \u2013 I have you at $XXX/month. That includes the discount for having your home insurance with us. Your roof has been replaced in the last 5\u201310 years, right?",score:10,fb:"Perfect! You assumed the package and jumped right in."},
+{text:"The auto is $XXX/month. Would you also like a home insurance quote?",score:3,fb:"Never ask permission. Assume the package."},
+{text:"Auto is $XXX/month. I can also save you money by bundling with your home.",score:5,fb:"Don't use 'bundle' \u2013 use 'package.' And don't ask, just do it."}]},
+{text:"I'm happy with my homeowners insurance, thanks.",responses:[
+{text:"That's great \u2013 the discount is already included in your auto price. Let me just make sure you're not overpaying on the home side too.",score:10,fb:"The discount is baked in \u2013 use that as your anchor."},
+{text:"No problem, let's just do the auto then.",score:1,fb:"Never give up the package that easily!"},
+{text:"I understand. But bundling saves a lot. Can I at least take a look?",score:4,fb:"Don't say 'bundle' \u2013 say 'package.' Don't ask \u2013 just start quoting."}]},
+{text:"Actually, we're in a condo, not a house.",responses:[
+{text:"Good to know! Quick question \u2013 if something happens to the roof, who's responsible, you or the association?",score:10,fb:"Perfect! If the association, it's an HO6. Don't forget loss assessment \u2013 required, default $25K."},
+{text:"OK, I can still quote you for the condo.",score:5,fb:"You need to identify condo vs townhome first. Ask the roof question."},
+{text:"Oh, condos are different. Let me check if we can insure that.",score:1,fb:"You should know this! Condos get HO6 policies."}]}
+]}
+];
+
+// ─── APP STATE ──────────────────────────────────────────────
+let state={view:"home",path:null,sectionIdx:0,subView:"content",completed:[],scenario:null,
+  quiz:{idx:0,selected:null,showResult:false,score:0,done:false},
+  rp:{step:0,selected:null,score:0,done:false}};
+
+function setState(updates){Object.assign(state,updates);render();}
+
+// ─── RENDER HELPERS ─────────────────────────────────────────
+function h(tag,attrs,...children){
+  const el=document.createElement(tag);
+  if(attrs)Object.keys(attrs).forEach(k=>{
+    if(k==="style"&&typeof attrs[k]==="object"){Object.assign(el.style,attrs[k]);}
+    else if(k.startsWith("on")){el.addEventListener(k.slice(2).toLowerCase(),attrs[k]);}
+    else if(k==="className"){el.className=attrs[k];}
+    else if(k==="innerHTML"){el.innerHTML=attrs[k];}
+    else el.setAttribute(k,attrs[k]);
+  });
+  children.flat(Infinity).forEach(c=>{
+    if(c==null)return;
+    el.appendChild(typeof c==="string"||typeof c==="number"?document.createTextNode(c):c);
+  });
+  return el;
+}
+
+function progressBar(current,total){
+  return h("div",{className:"progress-bar"},h("div",{className:"progress-fill",style:{width:(current/total*100)+"%"}}));
+}
+
+function renderContent(section){
+  return section.content.map(block=>{
+    if(block.type==="hero")return h("div",{className:"hero-block"},block.text);
+    if(block.type==="list")return h("div",{style:{background:"#fff",padding:"20px",borderRadius:"8px"}},
+      h("div",{style:{fontWeight:"700",color:"#1B2A4A",marginBottom:"12px",fontSize:"15px"}},block.title),
+      ...block.items.map(item=>h("div",{style:{display:"flex",gap:"8px",marginBottom:"8px",fontSize:"14px"}},
+        h("span",{style:{color:"#2A7B88"}},"\u2022"),item))
+    );
+    if(block.type==="stats")return h("div",{style:{display:"flex",gap:"12px"}},
+      ...block.items.map(s=>h("div",{className:"stat-card"},
+        h("div",{className:"stat-num"},s.num),h("div",{className:"stat-label"},s.label)))
+    );
+    if(block.type==="cards")return h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px"}},
+      ...block.items.map(c=>h("div",{className:"card"},
+        h("div",{style:{fontWeight:"700",color:"#1B2A4A",fontSize:"14px",marginBottom:"6px"}},c.title),
+        h("div",{style:{fontSize:"13px",lineHeight:"1.5"}},c.body)))
+    );
+    if(block.type==="alert")return h("div",{className:"alert-block"},"\u26A0\uFE0F "+block.text);
+    if(block.type==="tip")return h("div",{className:"tip-block"},"\u{1F4A1} "+block.text);
+    if(block.type==="placement")return h("div",{style:{background:"#fff",padding:"20px",borderRadius:"8px"}},
+      h("div",{style:{fontWeight:"700",color:"#1B2A4A",marginBottom:"12px",fontSize:"15px"}},block.title),
+      ...block.items.map((p,j)=>h("div",{style:{display:"flex",alignItems:"flex-start",gap:"12px",padding:"10px 0",borderBottom:j<block.items.length-1?"1px solid #E5E7EB":"none"}},
+        h("span",{className:"placement-rank",style:{background:j<2?"#2A7B88":j<4?"#1B2A4A":"#9CA3AF"}},""+(j+1)),
+        h("div",null,h("strong",{style:{color:"#1B2A4A",fontSize:"13px"}},p.carrier),
+          h("span",{style:{color:"#6B7280",fontSize:"13px"}}," \u2013 "+p.desc))))
+    );
+    if(block.type==="standards")return h("div",{style:{background:"#fff",padding:"20px",borderRadius:"8px"}},
+      ...block.items.map(s=>h("div",{className:"standard-row"},
+        h("div",{style:{fontWeight:"700",color:"#1B2A4A",fontSize:"13px",minWidth:"160px"}},s.label),
+        h("div",{style:{fontSize:"13px"}},s.value)))
+    );
+    if(block.type==="wordtrack")return h("div",{className:"wordtrack"},
+      h("h4",null,block.title),h("p",null,'"'+block.script+'"'));
+    if(block.type==="objection")return h("div",{className:"objection"},
+      h("h4",null,block.title),h("p",null,'"'+block.response+'"'));
+    if(block.type==="timeline")return h("div",{style:{background:"#fff",padding:"20px",borderRadius:"8px"}},
+      ...block.items.map(t=>h("div",{className:"timeline-item"},
+        h("div",{className:"timeline-day"},t.day),
+        h("div",{style:{fontSize:"13px",lineHeight:"1.5",paddingTop:"4px"}},t.action)))
+    );
+    return h("div");
+  });
+}
+
+// ─── VIEWS ──────────────────────────────────────────────────
+function renderHome(){
+  return h("div",{style:{minHeight:"100vh",background:"linear-gradient(135deg,#141F38 0%,#1B2A4A 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"24px"}},
+    h("div",{style:{maxWidth:"520px",textAlign:"center"}},
+      h("div",{style:{fontSize:"14px",letterSpacing:"3px",color:"#2A7B88",fontWeight:"700",marginBottom:"12px"}},"FRED BEANS INSURANCE"),
+      h("h1",{style:{fontSize:"36px",color:"#fff",fontWeight:"800",marginBottom:"8px",lineHeight:"1.2"}},"Sales Agent Training"),
+      h("div",{style:{width:"60px",height:"3px",background:"#2A7B88",margin:"16px auto 24px"}}),
+      h("p",{style:{fontSize:"15px",color:"#94A3B8",lineHeight:"1.7",marginBottom:"40px"}},"Interactive training covering carriers, coverage standards, word tracks, closing techniques, and more."),
+      h("div",{style:{display:"flex",flexDirection:"column",gap:"12px"}},
+        h("button",{style:{background:"#2A7B88",color:"#fff",padding:"18px 32px",borderRadius:"10px",fontSize:"16px",fontWeight:"700"},onClick:()=>setState({view:"learn",path:"new",sectionIdx:0,subView:"content"})},"🚀 New Hire \u2014 Full Onboarding"),
+        h("button",{style:{background:"transparent",color:"#fff",border:"2px solid #2A7B88",padding:"18px 32px",borderRadius:"10px",fontSize:"16px",fontWeight:"700"},onClick:()=>setState({view:"learn",path:"experienced",sectionIdx:0,subView:"content"})},"\u26A1 Experienced Agent \u2014 Refresher"),
+        h("button",{style:{background:"transparent",color:"#94A3B8",border:"1px solid #334155",padding:"18px 32px",borderRadius:"10px",fontSize:"16px",fontWeight:"600"},onClick:()=>setState({view:"roleplay",scenario:null})},"\u{1F3AD} Role-Play Simulator")
+      )
+    )
+  );
+}
+
+function renderLearn(){
+  const sections=state.path==="experienced"?SECTIONS.filter(s=>[4,5,6,7,8].includes(s.id)):SECTIONS;
+  const sec=sections[state.sectionIdx]||sections[0];
+  
+  const header=h("div",{style:{background:"#1B2A4A",padding:"12px 24px"}},
+    h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"8px"}},
+      h("button",{className:"nav-btn",onClick:()=>setState({view:"home",sectionIdx:0,subView:"content"})},"\u2190 Home"),
+      h("span",{style:{color:"#fff",fontWeight:"700",fontSize:"13px"}},state.path==="new"?"Full Onboarding":"Refresher"),
+      h("span",{style:{color:"#94A3B8",fontSize:"12px"}},state.completed.length+"/"+sections.length+" done")
+    ),
+    progressBar(state.completed.length,sections.length)
+  );
+
+  const tabs=h("div",{style:{background:"#fff",borderBottom:"1px solid #E5E7EB",padding:"8px 16px",overflowX:"auto",display:"flex",gap:"4px",whiteSpace:"nowrap"}},
+    ...sections.map((s,i)=>{
+      let cls="section-tab";
+      if(state.sectionIdx===i)cls+=" active";
+      else if(state.completed.includes(s.id))cls+=" done";
+      return h("button",{className:cls,onClick:()=>setState({sectionIdx:i,subView:"content",quiz:{idx:0,selected:null,showResult:false,score:0,done:false}})},
+        (state.completed.includes(s.id)?"\u2713 ":"")+s.icon+" "+s.title);
+    })
+  );
+
+  const sectionHeader=h("div",{style:{marginBottom:"24px"}},
+    h("div",{style:{fontSize:"12px",color:"#2A7B88",fontWeight:"700",letterSpacing:"1px",marginBottom:"4px"}},"SECTION "+sec.id+" OF "+SECTIONS.length),
+    h("h2",{style:{fontSize:"24px",color:"#1B2A4A",fontWeight:"800"}},sec.icon+" "+sec.title)
+  );
+
+  const tabToggle=h("div",{style:{display:"flex",gap:"8px",marginBottom:"24px"}},
+    h("button",{style:{flex:"1",background:state.subView==="content"?"#1B2A4A":"#fff",color:state.subView==="content"?"#fff":"#1B2A4A",border:"2px solid #1B2A4A",borderRadius:"8px",padding:"10px 16px",fontSize:"14px",fontWeight:"600"},onClick:()=>setState({subView:"content"})},"\u{1F4D6} Learn"),
+    h("button",{style:{flex:"1",background:state.subView==="quiz"?"#1B2A4A":"#fff",color:state.subView==="quiz"?"#fff":"#1B2A4A",border:"2px solid #1B2A4A",borderRadius:"8px",padding:"10px 16px",fontSize:"14px",fontWeight:"600"},onClick:()=>setState({subView:"quiz",quiz:{idx:0,selected:null,showResult:false,score:0,done:false}})},"\u{1F9EA} Quiz")
+  );
+
+  let body;
+  if(state.subView==="content"){
+    body=h("div",{style:{display:"flex",flexDirection:"column",gap:"20px"}},
+      ...renderContent(sec),
+      h("button",{className:"full-btn",style:{background:"#2A7B88",marginTop:"24px"},onClick:()=>setState({subView:"quiz",quiz:{idx:0,selected:null,showResult:false,score:0,done:false}})},"Ready? Take the Quiz \u2192")
+    );
+  }else{
+    body=renderQuiz(sec,sections);
+  }
+
+  const content=h("div",{style:{flex:"1",overflowY:"auto",maxWidth:"700px",width:"100%",margin:"0 auto",padding:"24px"}},sectionHeader,tabToggle,body);
+  return h("div",{style:{minHeight:"100vh",background:"#F5F4EF",display:"flex",flexDirection:"column"}},header,tabs,content);
+}
+
+function renderQuiz(sec,sections){
+  const qs=sec.quiz;
+  const qz=state.quiz;
+  
+  if(qz.done){
+    const pct=Math.round((qz.score/qs.length)*100);
+    const passed=pct>=70;
+    return h("div",{style:{textAlign:"center",padding:"40px"}},
+      h("div",{style:{fontSize:"64px",marginBottom:"16px"}},passed?"\u{1F389}":"\u{1F4DA}"),
+      h("div",{style:{fontSize:"28px",fontWeight:"800",color:passed?"#27AE60":"#C0392B"}},pct+"%"),
+      h("div",{style:{fontSize:"16px",color:"#6B7280",margin:"8px 0 24px"}},qz.score+"/"+qs.length+" correct"),
+      h("div",{style:{fontSize:"14px",color:passed?"#27AE60":"#B45309",fontWeight:"600",marginBottom:"24px"}},passed?"Great work! You're ready to move on.":"Review this section and try again."),
+      h("button",{style:{background:passed?"#27AE60":"#2A7B88",color:"#fff",padding:"12px 32px",borderRadius:"8px",fontSize:"14px",fontWeight:"600"},onClick:()=>{
+        if(passed){
+          if(!state.completed.includes(sec.id))state.completed.push(sec.id);
+          if(state.sectionIdx<sections.length-1)setState({sectionIdx:state.sectionIdx+1,subView:"content",quiz:{idx:0,selected:null,showResult:false,score:0,done:false}});
+          else setState({quiz:{idx:0,selected:null,showResult:false,score:0,done:false}});
+        }else{setState({subView:"content",quiz:{idx:0,selected:null,showResult:false,score:0,done:false}});}
+      }},passed?"Continue \u2192":"Try Again")
+    );
+  }
+
+  const q=qs[qz.idx];
+  return h("div",null,
+    h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"16px"}},
+      h("span",{style:{fontSize:"13px",color:"#6B7280"}},"Question "+(qz.idx+1)+" of "+qs.length),
+      h("span",{style:{fontSize:"13px",color:"#2A7B88",fontWeight:"600"}},"Score: "+qz.score+"/"+qz.idx)
+    ),
+    progressBar(qz.idx+1,qs.length),
+    h("div",{style:{fontSize:"16px",fontWeight:"600",color:"#1B2A4A",margin:"24px 0 20px",lineHeight:"1.5"}},q.q),
+    ...q.opts.map((opt,idx)=>{
+      let cls="quiz-opt";
+      if(qz.showResult&&idx===q.answer)cls+=" correct";
+      else if(qz.showResult&&idx===qz.selected&&idx!==q.answer)cls+=" wrong";
+      return h("button",{className:cls,onClick:()=>{
+        if(qz.showResult)return;
+        setState({quiz:{...qz,selected:idx,showResult:true,score:idx===q.answer?qz.score+1:qz.score}});
+      }},opt);
+    }),
+    qz.showResult?h("button",{className:"full-btn",style:{background:"#1B2A4A",marginTop:"20px"},onClick:()=>{
+      if(qz.idx<qs.length-1)setState({quiz:{...qz,idx:qz.idx+1,selected:null,showResult:false}});
+      else setState({quiz:{...qz,done:true}});
+    }},qz.idx<qs.length-1?"Next Question \u2192":"See Results"):null
+  );
+}
+
+function renderRoleplayMenu(){
+  return h("div",{style:{minHeight:"100vh",background:"#F5F4EF"}},
+    h("div",{style:{background:"#1B2A4A",padding:"16px 24px",display:"flex",alignItems:"center",justifyContent:"space-between"}},
+      h("button",{className:"nav-btn",onClick:()=>setState({view:"home"})},"\u2190 Back"),
+      h("span",{style:{color:"#fff",fontWeight:"700",fontSize:"16px"}},"Role-Play Simulator"),
+      h("div",{style:{width:"40px"}})
+    ),
+    h("div",{style:{maxWidth:"600px",margin:"0 auto",padding:"24px"}},
+      h("p",{style:{fontSize:"14px",color:"#6B7280",marginBottom:"24px"}},"Practice real customer interactions. Choose your responses and get instant feedback."),
+      ...SCENARIOS.map(s=>{
+        const diffColor=s.difficulty==="Beginner"?"#27AE60":s.difficulty==="Intermediate"?"#F59E0B":"#C0392B";
+        const diffBg=s.difficulty==="Beginner"?"#F0FDF4":s.difficulty==="Intermediate"?"#FFFBEB":"#FEF2F2";
+        return h("button",{style:{display:"block",width:"100%",background:"#fff",border:"1px solid #E5E7EB",borderRadius:"10px",padding:"20px",marginBottom:"12px",textAlign:"left"},onClick:()=>setState({scenario:s,rp:{step:0,selected:null,score:0,done:false}})},
+          h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"8px"}},
+            h("span",{style:{fontWeight:"700",color:"#1B2A4A",fontSize:"15px"}},s.title),
+            h("span",{style:{fontSize:"11px",fontWeight:"600",color:diffColor,background:diffBg,padding:"2px 10px",borderRadius:"12px"}},s.difficulty)
+          ),
+          h("div",{style:{fontSize:"13px",color:"#6B7280",lineHeight:"1.5"}},s.setup)
+        );
+      })
+    )
+  );
+}
+
+function renderRoleplayActive(){
+  const s=state.scenario;
+  const rp=state.rp;
+  const maxScore=s.lines.length*10;
+
+  if(rp.done){
+    const pct=Math.round((rp.score/maxScore)*100);
+    return h("div",{style:{minHeight:"100vh",background:"#F5F4EF"}},
+      h("div",{style:{background:"#1B2A4A",padding:"16px 24px",display:"flex",alignItems:"center",justifyContent:"space-between"}},
+        h("button",{className:"nav-btn",onClick:()=>setState({scenario:null})},"\u2190 Scenarios"),
+        h("span",{style:{color:"#fff",fontWeight:"700",fontSize:"14px"}},s.title),
+        h("div",{style:{width:"60px"}})
+      ),
+      h("div",{style:{maxWidth:"600px",margin:"0 auto",padding:"24px",textAlign:"center"}},
+        h("div",{style:{fontSize:"64px",marginBottom:"16px"}},pct>=80?"\u{1F3C6}":pct>=50?"\u{1F44D}":"\u{1F4AA}"),
+        h("div",{style:{fontSize:"28px",fontWeight:"800",color:"#1B2A4A"}},"Score: "+pct+"%"),
+        h("div",{style:{fontSize:"14px",color:"#6B7280",margin:"8px 0 24px"}},rp.score+"/"+maxScore+" points"),
+        h("div",{style:{fontSize:"14px",color:pct>=80?"#27AE60":"#B45309",fontWeight:"600",marginBottom:"24px"}},pct>=80?"Excellent! You handled that like a pro.":pct>=50?"Good effort! Review objection handling for improvement.":"Keep practicing! Review the word tracks and try again."),
+        h("button",{style:{background:"#1B2A4A",color:"#fff",padding:"12px 32px",borderRadius:"8px",fontSize:"14px",fontWeight:"600"},onClick:()=>setState({scenario:null})},"Back to Scenarios")
+      )
+    );
+  }
+
+  const line=s.lines[rp.step];
+  return h("div",{style:{minHeight:"100vh",background:"#F5F4EF"}},
+    h("div",{style:{background:"#1B2A4A",padding:"16px 24px",display:"flex",alignItems:"center",justifyContent:"space-between"}},
+      h("button",{className:"nav-btn",onClick:()=>setState({scenario:null})},"\u2190 Scenarios"),
+      h("span",{style:{color:"#fff",fontWeight:"700",fontSize:"14px"}},s.title),
+      h("div",{style:{width:"60px"}})
+    ),
+    h("div",{style:{maxWidth:"600px",margin:"0 auto",padding:"24px"}},
+      h("div",{style:{background:"#FEF3C7",padding:"16px",borderRadius:"8px",marginBottom:"20px",fontSize:"13px",color:"#92400E"}},h("strong",null,"Scenario: "),s.setup),
+      progressBar(rp.step+1,s.lines.length),
+      h("div",{className:"customer-bubble"},
+        h("div",{style:{fontSize:"11px",color:"#6B7280",fontWeight:"600",marginBottom:"6px"}},"CUSTOMER SAYS:"),
+        h("div",{style:{fontSize:"16px",color:"#1B2A4A",fontWeight:"600",lineHeight:"1.5"}},'"'+line.text+'"')
+      ),
+      h("div",{style:{fontSize:"13px",color:"#6B7280",fontWeight:"600",marginBottom:"10px"}},"YOUR RESPONSE:"),
+      ...line.responses.map((r,idx)=>{
+        let border="#E5E7EB",bg="#fff";
+        if(rp.selected!==null){
+          if(r.score>=8){bg="#F0FDF4";border="#27AE60";}
+          else if(r.score>=5){bg="#FFFBEB";border="#F59E0B";}
+          else{bg="#FEF2F2";border="#C0392B";}
+        }
+        const fbEl=rp.selected!==null?h("div",{className:"feedback",style:{color:r.score>=8?"#27AE60":r.score>=5?"#B45309":"#C0392B"}},(r.score>=8?"\u2705":r.score>=5?"\u26A1":"\u274C")+" "+r.fb+" ("+r.score+"/10 pts)"):null;
+        return h("button",{className:"rp-response",style:{background:bg,borderColor:border},onClick:()=>{
+          if(rp.selected!==null)return;
+          setState({rp:{...rp,selected:idx,score:rp.score+r.score}});
+        }},'"'+r.text+'"',fbEl);
+      }),
+      rp.selected!==null?h("button",{className:"full-btn",style:{background:"#1B2A4A",marginTop:"20px"},onClick:()=>{
+        if(rp.step<s.lines.length-1)setState({rp:{...rp,step:rp.step+1,selected:null}});
+        else setState({rp:{...rp,done:true}});
+      }},rp.step<s.lines.length-1?"Next \u2192":"See Results"):null
+    )
+  );
+}
+
+// ─── MAIN RENDER ────────────────────────────────────────────
+function render(){
+  const app=document.getElementById("app");
+  app.innerHTML="";
+  let view;
+  if(state.view==="home")view=renderHome();
+  else if(state.view==="learn")view=renderLearn();
+  else if(state.view==="roleplay"&&state.scenario)view=renderRoleplayActive();
+  else if(state.view==="roleplay")view=renderRoleplayMenu();
+  else view=renderHome();
+  app.appendChild(view);
+  window.scrollTo(0,0);
+}
+
+render();
+</script>
+</body>
+</html>
